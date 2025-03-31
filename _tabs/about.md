@@ -57,6 +57,6 @@ I'm **Ramez Saber** (Remo), a **Penetration Tester** specializing in **Active Di
 - **GitHub:** [Follow me on Github](https://github.com/Remo1x)
 - **LinkedIn:** [Follow me on LinkedIn](https://www.linkedin.com/in/rem01x/)
 - **Twitter/X:** [Follow me on Twitter/X](https://x.com/Rem01x)
-- **HackTheBox** [Follow me on Twitter/X](https://app.hackthebox.com/profile/1080501)
+- **HackTheBox** [Follow me on HackTheBox](https://app.hackthebox.com/profile/1080501)
 
 Passionate about breaking security, understanding the internals, and pushing the limits of offensive security. **Always hacking, always learning.** 🔥
