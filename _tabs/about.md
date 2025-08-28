@@ -11,6 +11,8 @@ I'm **Ramez Saber** (Remo), a **Penetration Tester** specializing in **Active Di
 - **CRTP** (Certified Red Team Professional)
 - **eWPTX** (eLearnSecurity Web Penetration Tester eXtreme)
 - **CRTO** (Certified Red Team Operator)
+- **eCPPT** (Certified Professional Penetration Tester)
+- **eMAPT** (Certified Mobile Penetration Tester)
 
 ## 🏆 Achievements
 - **Was HackTheBox Top 5 in Egypt** 🏅
