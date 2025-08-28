@@ -180,4 +180,4 @@ That’s it for the **Forgotten** machine! This challenge was a great test of 
 
 Remo
 
-CRTE | CRTO | CRTP | eWPTX
+CRTE | CRTP | CRTO | eWPTX | eCPPT | eMAPT
