@@ -198,6 +198,7 @@ Now let’s use the decoder to decode it and put it in html file
 Now let’s try to script our solution.
 
 ```python
+{% raw %}
 import requests
 import argparse
 import sys
@@ -432,7 +433,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-
+{% endraw %}
 ```
 
 ![image.png](../images/blackouts%2024.png)
