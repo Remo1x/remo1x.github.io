@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" font-family="'Segoe UI',sans-serif">
+  <defs><linearGradient id="bg8" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a1a2e"/><stop offset="1" stop-color="#0f0f1e"/></linearGradient></defs>
+  <rect width="1000" height="560" fill="url(#bg8)"/>
+  <text x="500" y="42" text-anchor="middle" fill="#e94560" font-size="22" font-weight="700">VirtualProtect vs VirtualAlloc vs WriteProcessMemory</text>
+  <text x="500" y="66" text-anchor="middle" fill="#c9c9d6" font-size="13">Three doors to the same room. Pick the one that opens with the gadgets you have.</text>
+
+  <!-- Col 1: VirtualProtect -->
+  <rect x="40" y="100" width="300" height="420" fill="#16213e" stroke="#5aa9ff"/>
+  <text x="190" y="128" text-anchor="middle" fill="#a5c9ff" font-size="15" font-weight="700">VirtualProtect</text>
+  <g font-family="Consolas,monospace" font-size="11" fill="#c9c9d6">
+    <text x="60" y="160">BOOL VirtualProtect(</text>
+    <text x="60" y="180">  LPVOID lpAddress,</text>
+    <text x="60" y="200">  SIZE_T dwSize,</text>
+    <text x="60" y="220">  DWORD  flNewProtect,</text>
+    <text x="60" y="240">  PDWORD lpflOldProtect );</text>
+  </g>
+  <text x="60" y="290" fill="#7fd28c" font-size="13" font-weight="700">Pros</text>
+  <text x="60" y="315" fill="#c9c9d6" font-size="12">• Operates on existing page</text>
+  <text x="60" y="335" fill="#c9c9d6" font-size="12">• No new allocation needed</text>
+  <text x="60" y="355" fill="#c9c9d6" font-size="12">• Cleanest ROP chain</text>
+  <text x="60" y="390" fill="#e94560" font-size="13" font-weight="700">Cons</text>
+  <text x="60" y="415" fill="#c9c9d6" font-size="12">• Needs writable output ptr</text>
+  <text x="60" y="435" fill="#c9c9d6" font-size="12">  (lpflOldProtect)</text>
+  <text x="60" y="470" fill="#f7d774" font-size="12" font-weight="700">Use when shellcode is</text>
+  <text x="60" y="490" fill="#f7d774" font-size="12" font-weight="700">already at a known addr.</text>
+
+  <!-- Col 2: VirtualAlloc -->
+  <rect x="360" y="100" width="300" height="420" fill="#16213e" stroke="#ff9a42"/>
+  <text x="510" y="128" text-anchor="middle" fill="#ffc088" font-size="15" font-weight="700">VirtualAlloc</text>
+  <g font-family="Consolas,monospace" font-size="11" fill="#c9c9d6">
+    <text x="380" y="160">LPVOID VirtualAlloc(</text>
+    <text x="380" y="180">  LPVOID lpAddress,</text>
+    <text x="380" y="200">  SIZE_T dwSize,</text>
+    <text x="380" y="220">  DWORD  flAllocationType,</text>
+    <text x="380" y="240">  DWORD  flProtect );</text>
+  </g>
+  <text x="380" y="290" fill="#7fd28c" font-size="13" font-weight="700">Pros</text>
+  <text x="380" y="315" fill="#c9c9d6" font-size="12">• 4 args instead of 5</text>
+  <text x="380" y="335" fill="#c9c9d6" font-size="12">• No output pointer</text>
+  <text x="380" y="355" fill="#c9c9d6" font-size="12">• Pass same addr as target</text>
+  <text x="380" y="375" fill="#c9c9d6" font-size="12">  → re-commits with RWX</text>
+  <text x="380" y="410" fill="#e94560" font-size="13" font-weight="700">Cons</text>
+  <text x="380" y="435" fill="#c9c9d6" font-size="12">• Slightly more surprising</text>
+  <text x="380" y="470" fill="#f7d774" font-size="12" font-weight="700">The default choice —</text>
+  <text x="380" y="490" fill="#f7d774" font-size="12" font-weight="700">this post's approach.</text>
+
+  <!-- Col 3: WriteProcessMemory -->
+  <rect x="680" y="100" width="300" height="420" fill="#16213e" stroke="#7fd28c"/>
+  <text x="830" y="128" text-anchor="middle" fill="#bce3a8" font-size="15" font-weight="700">WriteProcessMemory</text>
+  <g font-family="Consolas,monospace" font-size="11" fill="#c9c9d6">
+    <text x="700" y="160">BOOL WriteProcessMemory(</text>
+    <text x="700" y="180">  HANDLE hProcess,</text>
+    <text x="700" y="200">  LPVOID lpBaseAddress,</text>
+    <text x="700" y="220">  LPCVOID lpBuffer,</text>
+    <text x="700" y="240">  SIZE_T nSize,</text>
+    <text x="700" y="260">  SIZE_T *lpBytesWritten );</text>
+  </g>
+  <text x="700" y="300" fill="#7fd28c" font-size="13" font-weight="700">Pros</text>
+  <text x="700" y="325" fill="#c9c9d6" font-size="12">• Copies to any RWX region</text>
+  <text x="700" y="345" fill="#c9c9d6" font-size="12">• Useful when no page-flip</text>
+  <text x="700" y="365" fill="#c9c9d6" font-size="12">  primitive is available</text>
+  <text x="700" y="400" fill="#e94560" font-size="13" font-weight="700">Cons</text>
+  <text x="700" y="425" fill="#c9c9d6" font-size="12">• Needs GetCurrentProcess (-1)</text>
+  <text x="700" y="445" fill="#c9c9d6" font-size="12">• Needs a target RWX page</text>
+  <text x="700" y="470" fill="#f7d774" font-size="12" font-weight="700">Fallback for weird</text>
+  <text x="700" y="490" fill="#f7d774" font-size="12" font-weight="700">module import tables.</text>
+</svg>

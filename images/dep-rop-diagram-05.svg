@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" font-family="'Segoe UI',sans-serif">
+  <defs><linearGradient id="bg5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a1a2e"/><stop offset="1" stop-color="#0f0f1e"/></linearGradient></defs>
+  <rect width="1000" height="640" fill="url(#bg5)"/>
+  <text x="500" y="42" text-anchor="middle" fill="#e94560" font-size="22" font-weight="700">ROP-chain flow — five phases</text>
+  <text x="500" y="66" text-anchor="middle" fill="#c9c9d6" font-size="13">Each phase leaves one skeleton slot patched. INC ESI × 4 advances to the next slot.</text>
+
+  <g font-family="'Segoe UI',sans-serif" font-size="13">
+    <!-- Phase 1 -->
+    <rect x="60" y="100" width="880" height="80" fill="#5aa9ff22" stroke="#5aa9ff"/>
+    <text x="80" y="128" fill="#a5c9ff" font-size="15" font-weight="700">Phase 1 — Anchor ESI on the skeleton</text>
+    <text x="80" y="150" fill="#c9c9d6">push esp; push eax; pop edi; pop esi; ret     →  copy ESP into ESI</text>
+    <text x="80" y="170" fill="#c9c9d6">mov eax,esi + pop ecx (-0x1C) + add eax,ecx + push eax; pop esi   →  ESI = &amp;skeleton[0]</text>
+
+    <!-- Phase 2 -->
+    <rect x="60" y="195" width="880" height="100" fill="#ff9a4222" stroke="#ff9a42"/>
+    <text x="80" y="223" fill="#ffc088" font-size="15" font-weight="700">Phase 2 — Resolve VirtualAlloc and write it to slot[0]</text>
+    <text x="80" y="245" fill="#c9c9d6">pop eax (VirtualAlloc_IAT+1)  → pop ecx (-1) → add eax,ecx        →  EAX = &amp;IAT[VirtualAlloc]</text>
+    <text x="80" y="265" fill="#c9c9d6">mov eax,[eax]                                                     →  EAX = VirtualAlloc()</text>
+    <text x="80" y="285" fill="#c9c9d6">mov [esi], eax                                                    →  skeleton[0] = VirtualAlloc</text>
+
+    <!-- Phase 3 -->
+    <rect x="60" y="310" width="880" height="120" fill="#7fd28c22" stroke="#7fd28c"/>
+    <text x="80" y="338" fill="#bce3a8" font-size="15" font-weight="700">Phase 3 — Patch the four arguments (advance ESI by 4 each time)</text>
+    <text x="80" y="360" fill="#c9c9d6">slot[1] = shellcode addr  (via ESI − 0x210)   →  return address</text>
+    <text x="80" y="378" fill="#c9c9d6">slot[2] = lpAddress       (via ESI − 0x20C)   →  same shellcode addr</text>
+    <text x="80" y="396" fill="#c9c9d6">slot[3] = dwSize = 0x1        (neg -1)</text>
+    <text x="80" y="414" fill="#c9c9d6">slot[4] = flAllocationType = 0x1000  (0x80808080 + 0x7f7f8f80)</text>
+
+    <!-- Phase 4 -->
+    <rect x="60" y="445" width="880" height="65" fill="#f7d77422" stroke="#f7d774"/>
+    <text x="80" y="473" fill="#f7d774" font-size="15" font-weight="700">Phase 4 — Final argument</text>
+    <text x="80" y="495" fill="#c9c9d6">slot[5] = flProtect = 0x40  (neg 0xffffffc0)   →  PAGE_EXECUTE_READWRITE</text>
+
+    <!-- Phase 5 -->
+    <rect x="60" y="525" width="880" height="90" fill="#e9456022" stroke="#e94560"/>
+    <text x="80" y="553" fill="#ff8fa0" font-size="15" font-weight="700">Phase 5 — Pivot ESP onto the skeleton and call VirtualAlloc</text>
+    <text x="80" y="575" fill="#c9c9d6">mov eax,esi → add eax,-0x18 → xchg eax,ebp → mov esp,ebp; pop ebp; ret</text>
+    <text x="80" y="595" fill="#c9c9d6">RET now pops slot[0] = VirtualAlloc → runs → RETs into slot[1] = shellcode → shell.</text>
+  </g>
+</svg>

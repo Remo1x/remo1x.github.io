@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" font-family="'Segoe UI',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a1a2e"/>
+      <stop offset="1" stop-color="#0f0f1e"/>
+    </linearGradient>
+    <marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e94560"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="560" fill="url(#bg)"/>
+  <text x="500" y="42" text-anchor="middle" fill="#e94560" font-size="22" font-weight="700">DATA EXECUTION PREVENTION (DEP) — Executable vs Non-Executable Pages</text>
+  <text x="500" y="70" text-anchor="middle" fill="#c9c9d6" font-size="13">Every page has an NX bit. The CPU refuses to execute code from a page whose NX bit is set.</text>
+
+  <!-- Left: no DEP -->
+  <rect x="40" y="100" width="420" height="420" rx="10" fill="#16213e" stroke="#3f3f6b"/>
+  <text x="250" y="130" text-anchor="middle" fill="#f7d774" font-size="17" font-weight="700">Pre-DEP — Classic stack overflow works</text>
+
+  <rect x="70" y="160" width="360" height="60" fill="#233a5a" stroke="#4a72b3"/>
+  <text x="250" y="185" text-anchor="middle" fill="#a5c9ff" font-size="13">.text (code) — R + X</text>
+  <text x="250" y="205" text-anchor="middle" fill="#8fa2c7" font-size="11">Compiled program instructions</text>
+
+  <rect x="70" y="235" width="360" height="60" fill="#233a5a" stroke="#4a72b3"/>
+  <text x="250" y="260" text-anchor="middle" fill="#a5c9ff" font-size="13">Heap — R + W + X</text>
+
+  <rect x="70" y="310" width="360" height="100" fill="#3b1d2a" stroke="#e94560"/>
+  <text x="250" y="340" text-anchor="middle" fill="#ff8fa0" font-size="14">Stack — R + W + X</text>
+  <text x="250" y="365" text-anchor="middle" fill="#ffc7d0" font-size="11" font-family="monospace">EIP = 0x??shellcode → CPU executes</text>
+  <text x="250" y="385" text-anchor="middle" fill="#ffc7d0" font-size="11" font-family="monospace">\xcc\xcc\x90\x90 ...(shellcode runs)</text>
+
+  <text x="250" y="450" text-anchor="middle" fill="#7fd28c" font-size="13" font-weight="700">✓ shellcode on the stack executes fine</text>
+  <text x="250" y="475" text-anchor="middle" fill="#98b5a2" font-size="11">JMP ESP → land on \x90\x90...\x??\x??\x?? → EIP walks</text>
+
+  <!-- Right: DEP on -->
+  <rect x="540" y="100" width="420" height="420" rx="10" fill="#16213e" stroke="#3f3f6b"/>
+  <text x="750" y="130" text-anchor="middle" fill="#7fd28c" font-size="17" font-weight="700">DEP enabled — NX bit blocks execution</text>
+
+  <rect x="570" y="160" width="360" height="60" fill="#233a5a" stroke="#4a72b3"/>
+  <text x="750" y="185" text-anchor="middle" fill="#a5c9ff" font-size="13">.text (code) — R + X ✓</text>
+  <text x="750" y="205" text-anchor="middle" fill="#8fa2c7" font-size="11">PAGE_EXECUTE_READ</text>
+
+  <rect x="570" y="235" width="360" height="60" fill="#2c3a1e" stroke="#7fd28c" stroke-dasharray="4 2"/>
+  <text x="750" y="260" text-anchor="middle" fill="#bce3a8" font-size="13">Heap — R + W (NX = 1)</text>
+  <text x="750" y="280" text-anchor="middle" fill="#8fbb84" font-size="11">PAGE_READWRITE</text>
+
+  <rect x="570" y="310" width="360" height="100" fill="#2c3a1e" stroke="#7fd28c" stroke-dasharray="4 2"/>
+  <text x="750" y="340" text-anchor="middle" fill="#bce3a8" font-size="14">Stack — R + W (NX = 1)</text>
+  <text x="750" y="365" text-anchor="middle" fill="#f7d774" font-size="11" font-family="monospace">EIP = 0x??shellcode → #PF</text>
+  <text x="750" y="385" text-anchor="middle" fill="#e94560" font-size="11" font-family="monospace">STATUS_ACCESS_VIOLATION (0xC0000005)</text>
+
+  <text x="750" y="450" text-anchor="middle" fill="#e94560" font-size="13" font-weight="700">✗ CPU refuses to fetch instructions</text>
+  <text x="750" y="475" text-anchor="middle" fill="#c9adad" font-size="11">JMP ESP still works, but the first byte at ESP crashes the fetch</text>
+</svg>
